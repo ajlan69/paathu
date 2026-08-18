@@ -1,0 +1,516 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#f06292">
+<title>A Little Question for Paathu 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
+    height: 100%;
+  }
+
+  body {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, 'Poppins', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 30%, #f48fb1 60%, #f06292 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+  }
+
+  /* ========== FLOATING HEARTS ========== */
+  .bg-hearts {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; z-index: 0; overflow: hidden;
+    -webkit-transform: translate3d(0,0,0);
+  }
+  .bg-hearts span {
+    position: absolute;
+    font-size: 1.4rem;
+    opacity: 0.12;
+    will-change: transform, opacity;
+    animation: floatUp linear infinite;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  @keyframes floatUp {
+    0%   { transform: translate3d(0, 110vh, 0) rotate(0deg) scale(1); opacity: 0.12; }
+    50%  { opacity: 0.2; }
+    100% { transform: translate3d(0, -10vh, 0) rotate(360deg) scale(1.3); opacity: 0; }
+  }
+
+  /* ========== CARD ========== */
+  .card {
+    position: relative; z-index: 1;
+    width: 88vw; max-width: 360px;
+    background: rgba(255,255,255,0.96);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-radius: 28px;
+    box-shadow: 0 10px 48px rgba(233,30,99,0.16), 0 2px 8px rgba(0,0,0,0.05);
+    padding: 40px 26px 36px;
+    text-align: center;
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+  }
+
+  /* ========== INVITE SCREEN ========== */
+  #inviteScreen { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  #inviteScreen.hidden { display: none; }
+
+  .card-emoji { font-size: 2.6rem; margin-bottom: 6px; }
+  .card-title { font-size: 1.25rem; font-weight: 600; color: #c2185b; line-height: 1.35; }
+  .card-name {
+    font-size: 1.55rem; font-weight: 700;
+    background: linear-gradient(135deg, #e91e63, #ad1457);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .card-subtitle { font-size: 0.8rem; color: #888; margin-top: 2px; margin-bottom: 10px; }
+  .card-message {
+    font-size: 0.9rem; color: #555; line-height: 1.65; margin-bottom: 20px; padding: 0 2px;
+  }
+
+  .btn-row { display: flex; gap: 12px; align-items: center; justify-content: center; }
+
+  .btn-yes {
+    background: linear-gradient(135deg, #ec407a, #d81b60);
+    color: #fff; border: none; border-radius: 50px;
+    padding: 15px 38px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; box-shadow: 0 6px 20px rgba(233,30,99,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font-family: inherit; min-height: 50px;
+    touch-action: manipulation; -webkit-user-select: none; user-select: none;
+  }
+  .btn-yes:active { transform: scale(0.94); box-shadow: 0 2px 8px rgba(233,30,99,0.3); }
+
+  .btn-no {
+    background: #eee; color: #777; border: 2px solid #ddd; border-radius: 50px;
+    padding: 12px 22px; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: transform 0.12s ease;
+    font-family: inherit; position: relative; min-height: 44px;
+    touch-action: manipulation; -webkit-user-select: none; user-select: none;
+  }
+
+  /* ========== FORM SCREEN ========== */
+  #formScreen { display: none; flex-direction: column; align-items: center; gap: 14px; }
+  #formScreen.visible { display: flex; }
+  #formScreen.hidden { display: none; }
+
+  .form-title { font-size: 1.1rem; font-weight: 700; color: #c2185b; }
+  .form-subtitle { font-size: 0.8rem; color: #888; margin-top: -8px; }
+
+  label.field-label {
+    font-size: 0.72rem; font-weight: 600; color: #999;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    align-self: flex-start; margin-left: 4px;
+  }
+
+  .when-grid { display: grid; grid-template-columns: 1fr 0.65fr 1fr; gap: 8px; width: 100%; }
+  .when-select {
+    width: 100%; padding: 13px 28px 13px 10px; border: 2px solid #f8bbd0; border-radius: 14px;
+    font-size: 0.82rem; font-family: inherit; color: #333;
+    background: #fff; outline: none; transition: border-color 0.2s ease;
+    -webkit-appearance: none; -moz-appearance: none; appearance: none;
+    text-align: center; cursor: pointer; min-height: 46px;
+    touch-action: manipulation;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .when-select:focus { border-color: #ec407a; }
+  .when-select:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+
+  .loc-btn {
+    padding: 14px 10px; border: 2px solid #f3e5f5; border-radius: 14px;
+    background: #fff; font-size: 0.85rem; font-weight: 500; color: #666;
+    cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    font-family: inherit; min-height: 48px;
+    touch-action: manipulation; -webkit-user-select: none; user-select: none;
+  }
+  .loc-btn:active { transform: scale(0.97); }
+  .loc-btn.selected {
+    border-color: #ec407a; background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+    color: #c2185b; font-weight: 700; box-shadow: 0 2px 12px rgba(233,30,99,0.12);
+  }
+
+  .custom-loc-input {
+    width: 100%; padding: 14px 16px; border: 2px solid #f8bbd0; border-radius: 14px;
+    font-size: 1rem; font-family: inherit; color: #333;
+    background: #fff; outline: none; transition: border-color 0.2s ease;
+    min-height: 48px; -webkit-text-size-adjust: 100%;
+  }
+  .custom-loc-input:focus { border-color: #ec407a; }
+
+  .btn-whatsapp {
+    width: 100%; padding: 16px; border: none; border-radius: 14px;
+    background: #25D366; color: #fff; font-size: 1rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 6px 20px rgba(37,211,102,0.3);
+    font-family: inherit; transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; touch-action: manipulation; -webkit-user-select: none; user-select: none;
+  }
+  .btn-whatsapp:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(37,211,102,0.25); }
+  .btn-whatsapp svg { flex-shrink: 0; }
+
+  .btn-back {
+    background: none; border: none; color: #aaa; font-size: 0.78rem;
+    cursor: pointer; font-family: inherit; margin-top: -2px;
+    min-height: 44px; display: flex; align-items: center; touch-action: manipulation;
+  }
+  .btn-back:active { color: #c2185b; }
+
+  .error-msg { color: #e53935; font-size: 0.78rem; font-weight: 500; display: none; line-height: 1.3; }
+  .error-msg.show { display: block; }
+
+  #confetti-canvas {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 999; pointer-events: none;
+    -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0);
+  }
+
+  /* ========== SPLASH SCREEN ========== */
+  .splash {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 40%, #f48fb1 100%);
+    transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.9s;
+    -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0);
+  }
+  .splash.out { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-content { text-align: center; padding: 0 20px; }
+
+  .splash-heart {
+    font-size: 3.8rem; margin-bottom: 24px;
+    will-change: transform;
+    animation: splashPulse 1s ease-in-out infinite alternate, splashBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  }
+  @keyframes splashPulse { from { transform: scale(1); } to { transform: scale(1.12); } }
+  @keyframes splashBounce {
+    0%   { transform: scale(0) rotate(-8deg); opacity: 0; }
+    60%  { transform: scale(1.15) rotate(3deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .splash-line {
+    font-size: 1.1rem; font-weight: 500; color: #c2185b;
+    opacity: 0; transform: translate3d(0, 16px, 0);
+    animation: splashFadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  .splash-line-1 { animation-delay: 0.6s; color: #888; font-weight: 400; font-size: 0.95rem; }
+  .splash-line-2 { animation-delay: 1.0s; }
+  .splash-line-3 {
+    animation-delay: 1.4s; font-size: 2.1rem; font-weight: 700; margin-top: 4px;
+    background: linear-gradient(135deg, #e91e63, #ad1457);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @keyframes splashFadeUp { to { opacity: 1; transform: translate3d(0, 0, 0); } }
+
+  .splash-dots {
+    display: flex; gap: 7px; justify-content: center; margin-top: 30px;
+    opacity: 0; animation: splashFadeUp 0.4s ease 1.8s forwards;
+  }
+  .splash-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: #f48fb1;
+    will-change: transform;
+    animation: dotBounce 0.6s ease-in-out infinite alternate;
+  }
+  .splash-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .splash-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes dotBounce {
+    from { transform: translate3d(0, 0, 0); opacity: 0.35; }
+    to   { transform: translate3d(0, -7px, 0); opacity: 1; }
+  }
+
+  /* iPhone SE / mini */
+  @media (max-width: 375px) {
+    .card { padding: 32px 20px 28px; border-radius: 22px; }
+    .card-title { font-size: 1.15rem; }
+    .card-name { font-size: 1.4rem; }
+    .card-message { font-size: 0.85rem; }
+    .when-grid { grid-template-columns: 1fr; gap: 8px; }
+    .when-select { font-size: 0.88rem; padding: 14px 30px 14px 12px; text-align: left; }
+    .splash-heart { font-size: 3rem; }
+    .splash-line-3 { font-size: 1.8rem; }
+  }
+
+  /* iPhone 14 Pro+ / 15 Pro+ */
+  @media (min-width: 430px) {
+    .card { padding: 44px 32px 40px; }
+    .card-title { font-size: 1.3rem; }
+    .card-name { font-size: 1.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-content">
+    <div class="splash-heart" id="splashHeart">💕</div>
+    <div class="splash-line splash-line-1">Hey...</div>
+    <div class="splash-line splash-line-2">This one's for my</div>
+    <div class="splash-line splash-line-3">Paathu</div>
+    <div class="splash-dots"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<!-- FLOATING HEARTS -->
+<div class="bg-hearts" id="bgHearts"></div>
+
+<!-- CONFETTI CANVAS -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- MAIN CARD -->
+<div class="card">
+
+  <!-- INVITE SCREEN -->
+  <div id="inviteScreen">
+    <div class="card-emoji">💌</div>
+    <div class="card-title">A little question for</div>
+    <div class="card-name">Paathu</div>
+    <div class="card-subtitle">&nbsp;</div>
+    <p class="card-message">
+      I've been thinking... would you like to spend some time together? Just you, me, good vibes, and maybe some boba 🧋✨
+    </p>
+    <div class="btn-row">
+      <button class="btn-yes" id="btnYes" onclick="sayYes()">Yes! 💖</button>
+      <button class="btn-no" id="btnNo">No</button>
+    </div>
+  </div>
+
+  <!-- FORM SCREEN -->
+  <div id="formScreen">
+    <div class="form-title">Yay! 🎉 Let's plan this!</div>
+    <div class="form-subtitle">Pick a time and your favourite spot</div>
+
+    <label class="field-label">When?</label>
+    <div class="when-grid">
+      <select id="selMonth" class="when-select" onchange="populateDates()">
+        <option value="" disabled selected>Month</option>
+        <option value="August 2026">Aug 2026</option>
+        <option value="September 2026">Sep 2026</option>
+      </select>
+      <select id="selDate" class="when-select" disabled>
+        <option value="" disabled selected>Date</option>
+      </select>
+      <select id="selTime" class="when-select">
+        <option value="" disabled selected>Time</option>
+        <option value="Morning">🌅 Morning</option>
+        <option value="Afternoon">☀️ Afternoon</option>
+        <option value="Evening">🌇 Evening</option>
+      </select>
+    </div>
+
+    <label class="field-label">Where?</label>
+    <div class="location-grid" id="locGrid">
+      <button class="loc-btn" data-loc="Lulu Mall" onclick="pickLoc(this)">🏬 Lulu Mall</button>
+      <button class="loc-btn" data-loc="Boba Live" onclick="pickLoc(this)">🧋 Boba Live</button>
+      <button class="loc-btn" data-loc="Sign Laban" onclick="pickLoc(this)">📍 Sign Laban</button>
+      <button class="loc-btn" data-loc="custom" onclick="pickLoc(this)">💭 ...or where?</button>
+    </div>
+    <input type="text" id="customLoc" class="custom-loc-input" placeholder="Tell me your pick, paathu ✨" style="display:none;">
+
+    <div class="error-msg" id="errMsg">Please pick a date &amp; time and a location first!</div>
+
+    <button class="btn-whatsapp" id="btnWa" onclick="sendWhatsApp()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Confirm on WhatsApp
+    </button>
+
+    <button class="btn-back" onclick="goBack()">← change my mind</button>
+  </div>
+
+</div>
+
+<script>
+/* ========== BACKGROUND HEARTS ========== */
+(function(){
+  var c = document.getElementById('bgHearts');
+  var symbols = ['♥','♡','💕','💗','💖','✿'];
+  for(var i=0;i<22;i++){
+    var s = document.createElement('span');
+    s.textContent = symbols[i%symbols.length];
+    s.style.left = Math.random()*100+'%';
+    s.style.fontSize = (0.8+Math.random()*1.2)+'rem';
+    s.style.animationDuration = (8+Math.random()*12)+'s';
+    s.style.animationDelay  = (Math.random()*15)+'s';
+    c.appendChild(s);
+  }
+})();
+
+/* ========== CONFETTI ENGINE ========== */
+var confettiCanvas = document.getElementById('confetti-canvas');
+var ctx = confettiCanvas.getContext('2d');
+var pieces = [], rafId = null;
+
+function resizeCanvas(){
+  confettiCanvas.width  = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function randomColor(){
+  var p = ['#e91e63','#f06292','#ff4081','#fce4ec','#fff176','#ffd54f','#69f0ae','#40c4ff','#ea80fc','#b388ff','#ff8a80','#ff6e40'];
+  return p[Math.floor(Math.random()*p.length)];
+}
+
+function launchConfetti(count){
+  count = count || 120;
+  for(var i=0;i<count;i++){
+    pieces.push({
+      x: Math.random()*confettiCanvas.width,
+      y: Math.random()*confettiCanvas.height - confettiCanvas.height,
+      w: 6+Math.random()*6, h: 4+Math.random()*4,
+      color: randomColor(),
+      vx: (Math.random()-0.5)*4, vy: 2+Math.random()*4,
+      rot: Math.random()*360, rv: (Math.random()-0.5)*10,
+      opacity: 1
+    });
+  }
+  if(!rafId) animateConfetti();
+}
+
+function animateConfetti(){
+  ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  for(var i=0;i<pieces.length;i++){
+    var p = pieces[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.rot += p.rv;
+    if(p.y > confettiCanvas.height+20) p.opacity -= 0.02;
+    if(p.opacity <= 0) continue;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.globalAlpha = Math.max(p.opacity,0);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    ctx.restore();
+  }
+  pieces = pieces.filter(function(p){ return p.opacity > 0; });
+  if(pieces.length > 0){ rafId = requestAnimationFrame(animateConfetti); }
+  else { rafId = null; ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); }
+}
+
+/* ========== DODGING NO BUTTON ========== */
+var btnNo = document.getElementById('btnNo');
+var inviteCard = document.getElementById('inviteScreen');
+
+function dodge(btn){
+  var rect = btn.getBoundingClientRect();
+  var cardRect = inviteCard.getBoundingClientRect();
+  var maxX = cardRect.width - rect.width - 10;
+  var maxY = 180;
+  var nx = (Math.random()-0.5)*maxX;
+  var ny = (Math.random()-0.5)*maxY;
+  btn.style.transform = 'translate('+nx+'px,'+ny+'px)';
+}
+btnNo.addEventListener('mouseenter', function(){ dodge(this); });
+btnNo.addEventListener('touchstart', function(){ dodge(this); }, {passive:true});
+
+/* ========== YES BUTTON ========== */
+function sayYes(){
+  launchConfetti(150);
+  setTimeout(function(){ launchConfetti(80); }, 400);
+  document.getElementById('inviteScreen').classList.add('hidden');
+  var fs = document.getElementById('formScreen');
+  fs.classList.remove('hidden');
+  fs.classList.add('visible');
+}
+
+/* ========== POPULATE DATES ========== */
+function populateDates(){
+  var monthSel = document.getElementById('selMonth');
+  var dateSel  = document.getElementById('selDate');
+  dateSel.innerHTML = '<option value="" disabled selected>Date</option>';
+  dateSel.disabled = true;
+  var val = monthSel.value;
+  if(!val) return;
+  var days = val.indexOf('September') === 0 ? 30 : 31;
+  for(var d=1; d<=days; d++){
+    var opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    dateSel.appendChild(opt);
+  }
+  dateSel.disabled = false;
+  dateSel.selectedIndex = 0;
+}
+
+/* ========== LOCATION PICKER ========== */
+var selectedLoc = '';
+function pickLoc(btn){
+  var all = document.querySelectorAll('.loc-btn');
+  for(var i=0;i<all.length;i++) all[i].classList.remove('selected');
+  btn.classList.add('selected');
+  selectedLoc = btn.getAttribute('data-loc');
+  var ci = document.getElementById('customLoc');
+  ci.style.display = selectedLoc === 'custom' ? 'block' : 'none';
+  if(selectedLoc !== 'custom') ci.value = '';
+}
+
+/* ========== VALIDATE & SEND ========== */
+function sendWhatsApp(){
+  var month = document.getElementById('selMonth').value;
+  var day   = document.getElementById('selDate').value;
+  var time  = document.getElementById('selTime').value;
+  var err   = document.getElementById('errMsg');
+  if(!month || !day || !time || !selectedLoc || (selectedLoc==='custom' && !document.getElementById('customLoc').value.trim())){
+    err.classList.add('show'); return;
+  }
+  err.classList.remove('show');
+
+  var suffix = 'th';
+  if(day==='1'||day==='21'||day==='31') suffix='st';
+  else if(day==='2'||day==='22') suffix='nd';
+  else if(day==='3'||day==='23') suffix='rd';
+  var dateStr = day + suffix + ' ' + month;
+
+  var timeEmoji = time==='Morning' ? '🌅' : time==='Afternoon' ? '☀️' : '🌇';
+  var loc = selectedLoc === 'custom' ? document.getElementById('customLoc').value.trim() : selectedLoc;
+
+  var msg = 'Hey! 💕\n\nSo I was thinking... we should meet up! Here\'s what I have in mind:\n\n📅 *'+dateStr+'*\n⏰ *'+timeEmoji+' '+time+'*\n📍 *'+loc+'*\n\nI\'m so excited for this! Can\'t wait to see you 🥰💕';
+  var encoded = encodeURIComponent(msg);
+
+  launchConfetti(180);
+  setTimeout(function(){ launchConfetti(100); }, 500);
+  setTimeout(function(){
+    window.location.href = 'https://wa.me/918590117656?text=' + encoded;
+  }, 1200);
+}
+
+/* ========== GO BACK ========== */
+function goBack(){
+  document.getElementById('formScreen').classList.remove('visible');
+  document.getElementById('formScreen').classList.add('hidden');
+  document.getElementById('inviteScreen').classList.remove('hidden');
+}
+
+/* ========== SPLASH SCREEN ========== */
+setTimeout(function(){
+  document.getElementById('splash').classList.add('out');
+}, 3200);
+</script>
+</body>
+</html>
